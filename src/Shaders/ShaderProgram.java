@@ -2,9 +2,11 @@ package Shaders;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.opengl.Texture;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -63,6 +65,7 @@ public abstract class ShaderProgram {
 
     protected void loadVector(int location, Vector3f vector) {
         GL20.glUniform3f(location, vector.x, vector.y, vector.z);
+
     }
 
     protected void loadBoolean(int location, boolean value) {
@@ -78,6 +81,13 @@ public abstract class ShaderProgram {
         matrixBuffer.flip();
         GL20.glUniformMatrix4(location, false, matrixBuffer);
     }
+
+    protected void loadTexture(int location, int textureUnit, int textureID) {
+        GL20.glUniform1i(location, textureUnit);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0 + textureID);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+    }
+
 
     protected int getUniformLocation(String uniformName){
         return GL20.glGetUniformLocation(programID, uniformName);
