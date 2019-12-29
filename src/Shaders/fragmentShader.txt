@@ -10,9 +10,6 @@ in vec3 FragPos;
 out vec4 out_Color;
 
 uniform sampler2D textureSampler;
-uniform vec3 lightColor;
-
-
 
 
 struct Material {
@@ -22,13 +19,26 @@ struct Material {
 }; 
 uniform Material material;
 
-struct Light {
-    vec3 position;
+struct DirLight {
+	vec3 direction;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
 };
-uniform Light light; 
+uniform DirLight dirLight; 
+
+struct PointLight {    
+    vec3 position;
+    
+    float constant;
+    float linear;
+    float quadratic;  
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+uniform PointLight pointLights[NUMBER_POINT_LIGHTS]
 
 
 void main(void) {
@@ -38,7 +48,7 @@ void main(void) {
 	
 	//diffuse 
     vec3 unitNormal = normalize(surfaceNormal);
-    vec3 unitLightVector = normalize(toLightVector);
+    vec3 unitLightVector = normalize(-light.direction);
     float diff = max(dot(unitNormal, unitLightVector), 0.0);
     vec3 diffuse = light.diffuse * diff * texture(material.diffuse, pass_TextureCoords).rgb;
 	

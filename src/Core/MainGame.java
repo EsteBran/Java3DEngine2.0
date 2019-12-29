@@ -2,7 +2,7 @@ package Core;
 
 import Entities.Camera;
 import Entities.Entity;
-import Entities.Light;
+import Entities.DirLight;
 import Entities.Material;
 import Models.TexturedModel;
 import Rendering.*;
@@ -25,13 +25,13 @@ public class MainGame {
         Time time = new Time();
 
         int diffuseID = loader.loadTexture("container");
-        int specularID = loader.loadTexture("containerSpecular");
+        int specularID = loader.loadTexture("bricks");
 
         RawModel model = OBJLoader.loadObjModel("monkeyHigh", loader);
         RawModel model2 = OBJLoader.loadObjModel("monkeyHigh", loader);
 
-        ModelTexture texture = new ModelTexture(loader.loadTexture("container"));
-        ModelTexture texture2 = new ModelTexture(loader.loadTexture("container"));
+        ModelTexture texture = new ModelTexture(loader.loadTexture("bricks"));
+        ModelTexture texture2 = new ModelTexture(loader.loadTexture("bricks"));
 
         TexturedModel staticModel = new TexturedModel(model, texture);
         TexturedModel staticModel2 = new TexturedModel(model2, texture2);
@@ -46,19 +46,18 @@ public class MainGame {
 
 
             Models.add(new Entity(staticModel,
-                       new Vector3f(7,0,-10),
+                       new Vector3f(5,0,-20),
                     random.nextFloat(), random.nextFloat(), random.nextFloat(),3, material));
             Models.add(new Entity(staticModel2,
-                    new Vector3f(-7,0,-10),
+                    new Vector3f(-5,0,-20),
                     0,0,0,3, material2));
 
 
 
-        Light light = new Light(new Vector3f(0, 0, -20),         //Position
-                                new Vector3f(1,1,1),             //color
-                                new Vector3f(0.2f, 0.2f, 0.2f),  //ambient
-                                new Vector3f(1f, 1f, 1f),  //diffuse
-                                new Vector3f(1.0f, 1.0f, 1.0f)); //specular
+        DirLight dirLight = new DirLight(new Vector3f(-0.2f, -1f, -0.3f),   //Direction
+                                new Vector3f(0.2f, 0.2f, 0.2f),             //ambient
+                                new Vector3f(0.5f, 0.5f, 0.5f),             //diffuse
+                                new Vector3f(1.0f, 1.0f, 1.0f));            //specular
         Camera camera = new Camera();
 
 
@@ -67,13 +66,14 @@ public class MainGame {
         while(!Display.isCloseRequested()) {
 
             camera.move();
-            light.increasePosition(3.0f*(float)Math.sin(time.getTimeSecond()), 0f, 1f*(float)Math.cos(time.getTimeSecond()));
+            dirLight.setDirection(new Vector3f(10.0f * (float)Math.sin(time.getTimeSecond()), 0, 10.0f * (float)Math.cos(time.getTimeSecond())));
+
 
             for (Entity entity: Models) {
                 renderer.processEntity(entity);
 
             }
-            renderer.render(light, camera);
+            renderer.render(dirLight, camera);
             DisplayManager.updateDisplay();
         }
 

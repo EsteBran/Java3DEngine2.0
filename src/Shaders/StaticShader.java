@@ -1,7 +1,7 @@
 package Shaders;
 
 import Entities.Camera;
-import Entities.Light;
+import Entities.DirLight;
 import Entities.Material;
 import org.lwjgl.util.vector.Matrix4f;
 import toolbox.Maths;
@@ -17,7 +17,7 @@ public class StaticShader extends ShaderProgram {
     private int location_viewMatrix;
 
     private int location_lightColor;
-    private int location_lightPosition;
+    private int location_lightDirection;
     private int location_lightAmbient;
     private int location_lightDiffuse;
     private int location_lightSpecular;
@@ -48,8 +48,8 @@ public class StaticShader extends ShaderProgram {
         location_viewMatrix = super.getUniformLocation("viewMatrix");
 
         //light
-        location_lightColor = super.getUniformLocation("lightColor");
-        location_lightPosition = super.getUniformLocation("lightPosition");
+
+        location_lightDirection = super.getUniformLocation("light.direction");
         location_lightAmbient = super.getUniformLocation("light.ambient");
         location_lightDiffuse = super.getUniformLocation("light.diffuse");
         location_lightSpecular = super.getUniformLocation("light.specular");
@@ -73,9 +73,8 @@ public class StaticShader extends ShaderProgram {
         super.loadMatrix(location_projectionMatrix, projection);
     }
 
-    public void loadLight(Light light) {
-        super.loadVector(location_lightPosition, light.getPosition());
-        super.loadVector(location_lightColor, light.getColor());
+    public void loadLight(DirLight light) {
+        super.loadVector(location_lightDirection, light.getDirection());
         super.loadVector(location_lightAmbient, light.getAmbient());
         super.loadVector(location_lightDiffuse, light.getDiffuse());
         super.loadVector(location_lightSpecular, light.getSpecular());
