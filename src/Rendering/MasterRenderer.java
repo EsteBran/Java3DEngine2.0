@@ -3,6 +3,7 @@ package Rendering;
 import Entities.Camera;
 import Entities.Entity;
 import Entities.DirLight;
+import Entities.PointLight;
 import Models.TexturedModel;
 import Shaders.StaticShader;
 
@@ -17,10 +18,11 @@ public class MasterRenderer {
     private Renderer renderer = new Renderer(shader);
     private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 
-    public void render(DirLight sun, Camera camera) {
+    public void render(DirLight sun, PointLight[] pointLights, Camera camera) {
         renderer.prepare();
         shader.start();
-        shader.loadLight(sun);
+        shader.loadDirLight(sun);
+        shader.loadPointLight(pointLights);
         shader.loadViewMatrix(camera);
 
         renderer.render(entities);

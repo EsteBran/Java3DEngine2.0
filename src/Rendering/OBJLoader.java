@@ -90,11 +90,79 @@ public class OBJLoader {
 
         for(int i = 0; i < indices.size(); i++) {
             indicesArray[i] = indices.get(i);
-
         }
 
         return loader.loadtoVAO(verticesArray, textureArray, normalsArray,  indicesArray);
     }
+
+
+
+
+    public static RawModel loadObjLight(String fileName, Loader loader) {
+        FileReader fr = null;
+
+        try {
+            fr = new FileReader(new File("res/"+fileName+".obj"));
+        } catch (FileNotFoundException e) {
+            System.err.println("Couldn't load file! ");
+            e.printStackTrace();
+        }
+        BufferedReader reader = new BufferedReader(fr);
+
+        String line;
+        List<Vector3f> vertices = new ArrayList<Vector3f>();
+        List<Integer> indices = new ArrayList<Integer>();
+
+        float[] verticesArray = null;
+
+        int[] indicesArray = null;
+        try {
+            while(true) {
+                line = reader.readLine();
+                String[] currentLine = line.split(" ");
+                if(line.startsWith("v ")) {
+                    Vector3f vertex = new Vector3f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]));
+                    vertices.add(vertex);
+
+                }else if (line.startsWith("f ")) {
+                    currentLine = line.split(" ");
+                    String[] vertex1 = currentLine[1].split("/");
+                    String[] vertex2 = currentLine[2].split("/");
+                    String[] vertex3 = currentLine[3].split("/");
+
+                    processVertexLight(vertex1, indices);
+                    processVertexLight(vertex2, indices);
+                    processVertexLight(vertex3, indices);
+
+                    line = reader.readLine();
+                    reader.close();
+                }
+            }
+
+
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        verticesArray = new float[vertices.size()*3];
+        indicesArray = new int[indices.size()];
+
+        int vertexPointer = 0;
+        for (Vector3f vertex:vertices) {
+            verticesArray[vertexPointer++] = vertex.x;
+            verticesArray[vertexPointer++] = vertex.y;
+            verticesArray[vertexPointer++] = vertex.z;
+        }
+
+        for(int i = 0; i < indices.size(); i++) {
+            indicesArray[i] = indices.get(i);
+        }
+
+        return loader.loadLightToVAO(verticesArray,  indicesArray);
+    }
+
+
 
     private static void processVertex(String[] vertexData, List<Integer> indices, List<Vector2f> textures, List<Vector3f> normals, float[] textureArray, float[] normalsArray) {
 
@@ -111,9 +179,15 @@ public class OBJLoader {
         normalsArray[currentVertexPointer*3 + 2] = currentNorm.z;
 
 
+    }
 
+    private static void processVertexLight(String[] vertexData, List<Integer> indices) {
 
+        int currentVertexPointer = Integer.parseInt(vertexData[0]) -1;
+        indices.add(currentVertexPointer);
 
     }
+
+
 
 }

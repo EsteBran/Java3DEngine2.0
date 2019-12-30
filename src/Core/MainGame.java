@@ -1,14 +1,12 @@
 package Core;
 
-import Entities.Camera;
-import Entities.Entity;
-import Entities.DirLight;
-import Entities.Material;
+import Entities.*;
 import Models.TexturedModel;
 import Rendering.*;
 import Models.RawModel;
 import Textures.ModelTexture;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.Point;
 import org.lwjgl.util.vector.Vector3f;
 import toolbox.Time;
 
@@ -27,7 +25,7 @@ public class MainGame {
         int diffuseID = loader.loadTexture("container");
         int specularID = loader.loadTexture("bricks");
 
-        RawModel model = OBJLoader.loadObjModel("monkeyHigh", loader);
+        RawModel model = OBJLoader.loadObjModel("plane", loader);
         RawModel model2 = OBJLoader.loadObjModel("monkeyHigh", loader);
 
         ModelTexture texture = new ModelTexture(loader.loadTexture("bricks"));
@@ -36,7 +34,8 @@ public class MainGame {
         TexturedModel staticModel = new TexturedModel(model, texture);
         TexturedModel staticModel2 = new TexturedModel(model2, texture2);
 
-        Random random = new Random();
+        Random rand = new Random();
+
         Material material = new Material(diffuseID,
                                          specularID, 32f);
         Material material2 = new Material(diffuseID,
@@ -44,22 +43,30 @@ public class MainGame {
 
         List<Entity> Models = new ArrayList<Entity>();
 
-
+        //for (int i= 0; i < 2; i++) {
             Models.add(new Entity(staticModel,
-                       new Vector3f(5,0,-20),
-                    random.nextFloat(), random.nextFloat(), random.nextFloat(),3, material));
+                    new Vector3f(0, -5, -20),
+                    rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 10, material));
             Models.add(new Entity(staticModel2,
-                    new Vector3f(-5,0,-20),
-                    0,0,0,3, material2));
-
+                    new Vector3f(20*rand.nextFloat(), 20*rand.nextFloat(), -20*rand.nextFloat()),
+                    0, 0, 0, 3, material2));
+        //}
 
 
         DirLight dirLight = new DirLight(new Vector3f(-0.2f, -1f, -0.3f),   //Direction
-                                new Vector3f(0.2f, 0.2f, 0.2f),             //ambient
-                                new Vector3f(0.5f, 0.5f, 0.5f),             //diffuse
-                                new Vector3f(1.0f, 1.0f, 1.0f));            //specular
+                                new Vector3f(0.01f, 0.01f, 0.01f),           //ambient
+                                new Vector3f(0.01f, 0.01f, 0.01f),           //diffuse
+                                new Vector3f(0.01f, 0.01f, 0.01f));          //specular
+
         Camera camera = new Camera();
 
+        PointLight[] pointLights = new PointLight[10];
+            for (int a = 0; a < 10; a++) {
+                pointLights[a] = new PointLight(new Vector3f(rand.nextFloat()*40+10, rand.nextFloat()*1, rand.nextFloat()*-40),
+                                                new Vector3f(1, 1, 1),
+                                                new Vector3f(1, 1,1),
+                                                new Vector3f(1, 1, 1));
+            }
 
         MasterRenderer renderer = new MasterRenderer();
 
@@ -68,12 +75,11 @@ public class MainGame {
             camera.move();
             dirLight.setDirection(new Vector3f(10.0f * (float)Math.sin(time.getTimeSecond()), 0, 10.0f * (float)Math.cos(time.getTimeSecond())));
 
-
             for (Entity entity: Models) {
                 renderer.processEntity(entity);
 
             }
-            renderer.render(dirLight, camera);
+            renderer.render(dirLight, pointLights, camera);
             DisplayManager.updateDisplay();
         }
 

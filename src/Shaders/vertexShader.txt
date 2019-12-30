@@ -7,9 +7,9 @@ in vec3 normal;
 
 out vec2 pass_TextureCoords;
 out vec3 surfaceNormal;
-out vec3 toLightVector;
+
 out vec3 cameraPos;
-out vec3 FragPos;
+out vec3 fragPos;
 
 
 uniform mat4 transformationMatrix;
@@ -26,9 +26,9 @@ void main(void) {
 
     cameraPos = viewMatrix[3].xyz;
 
-    FragPos = vec3(transformationMatrix * vec4(position, 1.0));
+    fragPos = vec3(transformationMatrix * vec4(position, 1.0));
 
     surfaceNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;
-    toLightVector = lightPosition - worldPosition.xyz;
+	
 
 }

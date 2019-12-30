@@ -1,6 +1,6 @@
 package Entities;
 
-import org.lwjgl.input.Keyboard;
+
 import org.lwjgl.util.vector.Vector3f;
 
 public class DirLight {
@@ -16,6 +16,18 @@ public class DirLight {
 
         this.ambient = ambient;
         this.diffuse = diffuse;
+        this.specular = specular;
+    }
+
+    public void setAmbient(Vector3f ambient) {
+        this.ambient = ambient;
+    }
+
+    public void setDiffuse(Vector3f diffuse) {
+        this.diffuse = diffuse;
+    }
+
+    public void setSpecular(Vector3f specular) {
         this.specular = specular;
     }
 
